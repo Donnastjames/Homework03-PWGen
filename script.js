@@ -1,6 +1,7 @@
 // Assignment Code
 var generateBtn = document.querySelector("#generate");
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
 const lowerCaseChoices = Object.freeze(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]);
 
 const upperCaseChoices = Object.freeze(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]);
@@ -26,8 +27,8 @@ function pickRandArrayIndex(arrayLength) {
  * @returns a random character from that arrayOfChars
  */
 function pickRandCharFromArray(arrayOfChars) {
-  const randIndex = pickRandArrayIndex(arrayOfChars.length);
-  return arrayOfChars[randIndex];
+  const randomIndex = pickRandArrayIndex(arrayOfChars.length);
+  return arrayOfChars[randomIndex];
 }
 
 /**
@@ -58,9 +59,23 @@ function pickIndexContainingNull(array) {
 // Generate a password ...
 function generatePassword() {
   console.log('Called generatePassword()');
-  const charCount = window.prompt("How many characters does your password need to have? Between 8 and 128:");
-  console.log('charCount:', charCount);
-  // TODO: Show an error if the charCount is not a number between 8 and 128.
+  const charCountStr = window.prompt("How many characters does your password need to have? Between 8 and 128:");
+  console.log('charCount:', charCountStr);
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/parseInt
+  const charCount = Number.parseInt(charCountStr, 10);
+  if (Number.isNaN(charCount)) {
+    // https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Strings
+    const errorStr = `You entered "${charCountStr}" which is not a number!`;
+    console.error(errorStr);
+    alert(errorStr);
+    return null;
+  }
+  if ((charCount < 8) || (charCount > 128)) {
+    const errorStr = `You entered "${charCount}" which is outside of the range: 8 through 128.`;
+    console.error(errorStr);
+    alert(errorStr);
+    return null;
+  }
   const useLowerCase = window.confirm(`Do you need lower case letters? OK for Yes, Cancel for No\n${lowerCaseChoices.join('')}`);
   console.log('useLowerCase:', useLowerCase);
   const useUpperCase = window.confirm(`Do you need upper case letters? OK for Yes, Cancel for No\n${upperCaseChoices.join('')}`);
@@ -79,6 +94,7 @@ function generatePassword() {
   // This array will represent the final returned password.
   // It will start off filled with charCount null(s), where
   // null(s) mean we haven't chosen the character yet ...
+  // generatedPassword = [null, null, null, ... charCount - 1 times];
   let generatedPassword = new Array(charCount).fill(null);
 
   if (useLowerCase) {
@@ -88,7 +104,7 @@ function generatePassword() {
     // lower case character ...
     const randomIndex = pickIndexContainingNull(generatedPassword);
     if (randomIndex === -1) {
-      console.log("Couldn't find a place for our first lower case character.");
+      console.error("Couldn't find a place for our first lower case character.");
       return null;
     }
     const randLowerCaseChar = pickRandCharFromArray(lowerCaseChoices);
@@ -99,7 +115,7 @@ function generatePassword() {
     allPossibleChoices.push(...upperCaseChoices);
     const randomIndex = pickIndexContainingNull(generatedPassword);
     if (randomIndex === -1) {
-      console.log("Couldn't find a place for our first upper case character.");
+      console.error("Couldn't find a place for our first upper case character.");
       return null;
     }
     const randUpperCaseChar = pickRandCharFromArray(upperCaseChoices);
@@ -107,7 +123,7 @@ function generatePassword() {
   }
 
   if (useNumbers) {
-    allPossibleChoices.push(...useNumbers);
+    allPossibleChoices.push(...numberChoices);
     const randomIndex = pickIndexContainingNull(generatedPassword);
     if (randomIndex === -1) {
       console.log("Couldn't find a place for our first number character.");
@@ -118,18 +134,32 @@ function generatePassword() {
   }
 
   if (useSpecialChars) {
-    allPossibleChoices.push(...useSpecialChars);
-    const randIndex = pickIndexContainingNull(generatedPassword);
-    if (randIndex === -1) {
-      console.log("Couldn't find a place for our first special character.")
+    allPossibleChoices.push(...specialCharChoices);
+    const randomIndex = pickIndexContainingNull(generatedPassword);
+    if (randomIndex === -1) {
+      console.error("Couldn't find a place for our first special character.")
       return null;
     }
-    const randSpecialChar = pickRandCharFromArray(useSpecialChars);
+    const randSpecialChar = pickRandCharFromArray(specialCharChoices);
     generatedPassword[randomIndex] = randSpecialChar;
   }
 
-  // TODO: Use a for loop to pick chars for all remaining
-  //   null elements within the generatedPassword[] array.
+  console.log('In the end allPossibleChoices was:', allPossibleChoices);
+  if (allPossibleChoices.length <= 0) {
+    const errorStr = "You must answer OK=Yes to at least one set of characters."
+    console.error(errorStr);
+    alert(errorStr);
+    return null;
+  }
+
+  // Use a for loop to pick chars for all remaining
+  // null elements within the generatedPassword[] array ...
+  for (let i = 0; i < generatedPassword.length; i += 1) {
+    if (generatedPassword[i] === null) {
+      const randChar = pickRandCharFromArray(allPossibleChoices);
+      generatedPassword[i] = randChar;
+    }
+  }
 
   console.log('generatedPassword() returning:', generatedPassword.join(''));
   return generatedPassword.join('');
