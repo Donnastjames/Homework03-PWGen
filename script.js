@@ -96,6 +96,7 @@ function generatePassword() {
   // null(s) mean we haven't chosen the character yet ...
   // generatedPassword = [null, null, null, ... charCount - 1 times];
   let generatedPassword = new Array(charCount).fill(null);
+  // https://stackoverflow.com/questions/957537/how-can-i-display-a-javascript-object
   console.log('1. generatedPassword:', JSON.stringify(generatedPassword));
 
   if (useLowerCase) {
