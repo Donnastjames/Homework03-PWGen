@@ -96,6 +96,7 @@ function generatePassword() {
   // null(s) mean we haven't chosen the character yet ...
   // generatedPassword = [null, null, null, ... charCount - 1 times];
   let generatedPassword = new Array(charCount).fill(null);
+  console.log('1. generatedPassword:', JSON.stringify(generatedPassword));
 
   if (useLowerCase) {
     allPossibleChoices.push(...lowerCaseChoices);
@@ -109,6 +110,7 @@ function generatePassword() {
     }
     const randLowerCaseChar = pickRandCharFromArray(lowerCaseChoices);
     generatedPassword[randomIndex] = randLowerCaseChar;
+    console.log('2. generatedPassword:', JSON.stringify(generatedPassword));
   }
 
   if (useUpperCase) {
@@ -120,6 +122,7 @@ function generatePassword() {
     }
     const randUpperCaseChar = pickRandCharFromArray(upperCaseChoices);
     generatedPassword[randomIndex] = randUpperCaseChar;
+    console.log('3. generatedPassword:', JSON.stringify(generatedPassword));
   }
 
   if (useNumbers) {
@@ -131,6 +134,7 @@ function generatePassword() {
     }
     const randNumberChar = pickRandCharFromArray(numberChoices);
     generatedPassword[randomIndex] = randNumberChar;
+    console.log('4. generatedPassword:', JSON.stringify(generatedPassword));
   }
 
   if (useSpecialChars) {
@@ -142,6 +146,7 @@ function generatePassword() {
     }
     const randSpecialChar = pickRandCharFromArray(specialCharChoices);
     generatedPassword[randomIndex] = randSpecialChar;
+    console.log('5. generatedPassword:', JSON.stringify(generatedPassword));
   }
 
   console.log('In the end allPossibleChoices was:', allPossibleChoices);
@@ -160,6 +165,8 @@ function generatePassword() {
       generatedPassword[i] = randChar;
     }
   }
+
+  console.log('6. final generatedPassword:', JSON.stringify(generatedPassword));
 
   console.log('generatedPassword() returning:', generatedPassword.join(''));
   return generatedPassword.join('');
